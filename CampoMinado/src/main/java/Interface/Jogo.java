@@ -10,8 +10,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.Random;
+import javax.swing.Timer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -37,6 +39,9 @@ public class Jogo extends javax.swing.JFrame {
     int quantidadeBombas= 17;
     int quantidadeCasasAbertas=0;
     boolean jogoEncerrado= false;
+    
+    int segundosPassados = 0;
+    Timer cronometro;
     
     
     /**
@@ -107,9 +112,10 @@ public class Jogo extends javax.swing.JFrame {
     }//fim do adicionar bombas
     
     public void IniciarJogo(){
+        LimparJogo();
         //chamar o metodo adicionarBombas
         AdicionarBombas();
-        
+        IniciarCronometro();
         //depois precisamos iniciar os botoes do jogo
         for(int coluna=0;coluna<=9;coluna++){
            for(int linha=0; linha<=9;linha++){
@@ -119,6 +125,7 @@ public class Jogo extends javax.swing.JFrame {
            }//fom do 2 for
         }//fim do 1 for
     btnIniciar.setText("REINICIAR");
+    
     }
     
     public void abrirBotao(int linha, int coluna){
@@ -137,17 +144,109 @@ public class Jogo extends javax.swing.JFrame {
     //se no botao tiver uma bomba , entao vamos a bomba a ele
     if(bombas[linha][coluna]){
         //variavel que recebe a nossa imagem
-    ImageIcon imgBomba = new ImageIcon(getClass().getResource("/Interface/bomb.png"));
+    ImageIcon imgBomba = new ImageIcon(getClass().getResource("/assests/bomb (1).png"));
     //colocae a imagem no botao
     botao.setIcon(imgBomba);
+    FinalizarJogo(false);
     return;
     }else{
-   ImageIcon imgBandeira = new ImageIcon(getClass().getResource("/Interface/map.png"));
+   ImageIcon imgBandeira = new ImageIcon(getClass().getResource("/assests/map.png"));
    botao.setIcon(imgBandeira);
    return;
     }
     
     }//fim do metodo abrirbotao
+    
+    public void FinalizarJogo(boolean venceu){
+        mostrarBombas();
+  //vamos informar que o jogo acabou
+        jogoEncerrado=true;
+        cronometro.stop();
+        //verificar se a pessoa venceu ou nao
+        if(venceu){
+        JOptionPane.showMessageDialog(this,"Parabens voce conseguiu! ");
+        LimparJogo();
+                }else{JOptionPane.showMessageDialog(this," Parece que nao foi dessa vez . Tente novamente! ");
+                LimparJogo();
+                
+        }
+    
+    }//fim do FinalizarJogo
+    
+    public void VerificarVitoria(){
+    //armazenar a quantidade de casas com bandeiras
+        int casasSemBomba= 100 - quantidadeBombas;
+        //se a pessoa abriu todas as bandeiras e nao abriu nenhuma bomba
+        //entao ela venceu o jogo, e finalizaeJogo imprime a mensagem
+        if(quantidadeCasasAbertas == casasSemBomba){
+        FinalizarJogo(true);
+        }
+    
+    }
+    
+    public void IniciarCronometro(){
+    //zerar o cronometro caso tenha tido um jogo anterior
+    if(cronometro !=null){
+    cronometro.stop();
+    }
+    //reseta o crometro
+    segundosPassados =0;
+    tfTempo.setText("00:00");
+    
+    //converter o tempo em minutos e segundos
+    // o cronometro conta de 1 em 1 segundo, e vai convertendo
+    cronometro = new Timer (1000, Evento->{
+    segundosPassados++;
+            int minutos = segundosPassados/60;
+            int horas = minutos/60;
+            int segundos = segundosPassados%60;
+            //mostrar o tempo dentro da variavel
+            tfTempo.setText(String.format("%02d:%02d:%02d",horas,minutos,segundos ));
+                   
+                    });
+    cronometro.start();
+      
+    }//fim do iniciarCronometro
+    
+   public void LimparJogo(){
+   quantidadeCasasAbertas=0;
+   jogoEncerrado=false;
+   
+   for(int coluna=0;coluna<=9;coluna++){
+   for (int linha=0; linha<=9; linha++){
+       bombas[linha][coluna]=false;
+       abertos[linha][coluna]=false;
+               
+               //limpeza dos botoes
+               JButton botao = btnCampos[linha][coluna];
+               botao.setIcon(null);
+               
+               
+               
+   }//fim do 2 for
+   }//fim do 1 for
+   AdicionarBombas();
+   IniciarCronometro();
+   
+   }//fm do LimparJogo
+   
+   public void mostrarBombas(){
+   
+       for(int coluna=0; coluna<=9; coluna++){
+        for (int  linha=0; linha<=9; linha++){
+       JButton botao = btnCampos[linha][coluna];
+    //se no botao tiver uma bomba , entao vamos a bomba a ele
+    if(bombas[linha][coluna]){
+        //variavel que recebe a nossa imagem
+    ImageIcon imgBomba = new ImageIcon(getClass().getResource("/assests/bomb (1).png"));
+    //colocae a imagem no botao
+    botao.setIcon(imgBomba);
+    
+    }//fom do if
+       }//fim do 2 for
+    }//fim do 1 for
+   }//fim de mostrarBombas
+    
     
     
     
@@ -180,6 +279,7 @@ public class Jogo extends javax.swing.JFrame {
         tfTempo.setEditable(false);
         tfTempo.setFont(new java.awt.Font("Jokerman", 1, 12)); // NOI18N
         tfTempo.setText("00:00");
+        tfTempo.setAlignmentX(5.0F);
         tfTempo.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createCompoundBorder()));
         tfTempo.addActionListener(this::tfTempoActionPerformed);
 
@@ -213,8 +313,8 @@ public class Jogo extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(titulo)
-                        .addGap(215, 215, 215)
-                        .addComponent(tfTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(112, 112, 112)
+                        .addComponent(tfTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29)
                         .addComponent(btnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
