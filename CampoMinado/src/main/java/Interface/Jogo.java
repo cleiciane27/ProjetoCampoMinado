@@ -150,12 +150,44 @@ public class Jogo extends javax.swing.JFrame {
     FinalizarJogo(false);
     return;
     }else{
-   ImageIcon imgBandeira = new ImageIcon(getClass().getResource("/assests/map.png"));
-   botao.setIcon(imgBandeira);
-   return;
-    }
+
+    ImageIcon imgBandeira = new ImageIcon(
+        getClass().getResource("/assests/map.png")
+    );
+    botao.setIcon(imgBandeira);
+    // mostrar as casas ao redor
+    mostrarAoRedor(linha, coluna);
+    return;
+}
+   }//fim do metodo abrirbotao
     
-    }//fim do metodo abrirbotao
+    public void mostrarAoRedor(int linha, int coluna){
+    ImageIcon imgBomba = new ImageIcon(
+        getClass().getResource("/assests/bomb (1).png")
+    );
+    ImageIcon imgBandeira = new ImageIcon(
+        getClass().getResource("/assests/map.png")
+    );
+    // verificar as 8 casas ao redor
+    for(int i = linha - 1; i <= linha + 1; i++){
+        for(int j = coluna - 1; j <= coluna + 1; j++){
+            // verificar se a posição está dentro do tabuleiro
+            if(i >= 0 && i < 10 && j >= 0 && j < 10){
+                // não mexer na própria casa clicada
+                if(i == linha && j == coluna){
+                    continue;
+                }
+                // se tiver bomba
+                if(bombas[i][j]){
+                    btnCampos[i][j].setIcon(imgBomba);
+                }else{
+                    // se não tiver bomba
+                    btnCampos[i][j].setIcon(imgBandeira);
+                }
+            }
+        }
+    }
+}
     
     public void FinalizarJogo(boolean venceu){
         mostrarBombas();
@@ -246,12 +278,12 @@ public class Jogo extends javax.swing.JFrame {
        }//fim do 2 for
     }//fim do 1 for
    }//fim de mostrarBombas
+   
     
     
     
     
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -270,6 +302,8 @@ public class Jogo extends javax.swing.JFrame {
         jMenu1.setText("jMenu1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        setResizable(false);
         setSize(new java.awt.Dimension(20, 20));
 
         titulo.setFont(new java.awt.Font("Jokerman", 0, 28)); // NOI18N
@@ -290,11 +324,11 @@ public class Jogo extends javax.swing.JFrame {
         painelCampo.setLayout(painelCampoLayout);
         painelCampoLayout.setHorizontalGroup(
             painelCampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 980, Short.MAX_VALUE)
+            .addGap(0, 865, Short.MAX_VALUE)
         );
         painelCampoLayout.setVerticalGroup(
             painelCampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 473, Short.MAX_VALUE)
+            .addGap(0, 408, Short.MAX_VALUE)
         );
 
         btnIniciar.setBackground(new java.awt.Color(0, 51, 102));
@@ -309,18 +343,16 @@ public class Jogo extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addGap(140, 140, 140)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(painelCampo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(titulo)
                         .addGap(112, 112, 112)
                         .addComponent(tfTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(29, 29, 29)
-                        .addComponent(btnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(painelCampo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(58, Short.MAX_VALUE))
+                        .addComponent(btnIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(150, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -331,12 +363,13 @@ public class Jogo extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(tfTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(titulo)))
-                .addGap(48, 48, 48)
+                .addGap(53, 53, 53)
                 .addComponent(painelCampo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(587, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
